@@ -1,0 +1,133 @@
+ENUNCIADOS:
+_________________________________________
+Clientes que: 
+1-Su nombre contenga la 'A' o 'a' y que sean de 'España' o 'Spain'.
+2-Clientes cuyo nombre no empiece por 'A' que sean de 'Londres' o 'Paris'.
+3-Productos entre 10 y 20€ de las gamas 'Aromaticas' o 'Herramientas'.
+4-Cliente cuyo nombre contenga el caracter 'a' u que sean de Londres, Paris, Madrid, Barcelona o New York.
+5-Productos que tengan un precio de venta de 1 , 5 o 10€
+6-Productos cuyo margen de beneficio no supere el 50% y que no sean de la gama Ornamentales.
+7-Pedidos entregados antes de una semana desde la fecha de pedido.
+8-Empleados que no tengan jefe.
+
+Consultas multitabla:
+
+9-Detalle de los pedidos de 2008.
+10-Nombre de los clientes y nombre del empleado que los captó.
+11-Detalle de los pedidos en los que se proyecte el nombre de los productos su gama y el precio por línea.
+12-Empleados de oficinas de España o Spain.
+13-Clientes captados por empleados que trabajen en las oficinas de Barcelona o Madrid.
+14-Nombre de los empleados y nombre de su jefe.
+
+___________________________________________
+
+SOLUCIÓN!
+___________________________________________
+
+1) SELECT CONCAT (NombreCliente,NombreContacto, ApellidoContacto,Pais,Ciudad)
+
+FROM clientes
+
+WHERE (Pais LIKE 'España' OR 'Spain') AND (NombreCliente LIKE "%a%" OR "%A%");
+
+
+2)SELECT CONCAT (NombreCliente, NombreContacto, ApellidoContacto,Pais,Ciudad)
+
+FROM clientes
+
+WHERE Ciudad LIKE 'London' OR 'Paris' AND NombreCliente NOT LIKE "A%";
+
+
+3)SELECT Nombre,Gama,PrecioVenta
+
+FROM productos
+
+WHERE (PrecioVenta >= '10' AND PrecioVenta <= '20') AND (Gama LIKE 'Ornamentales' OR Gama LIKE 'Herramientas');
+
+4)SELECT *
+
+from Clientes
+
+WHERE (Ciudad like "London" or Ciudad like "París" or Ciudad like "Madrid" or Ciudad like "Barcelona" or Ciudad like "New York")
+
+and NombreCliente like "%a%"
+
+5)SELECT *
+
+from productos
+
+where (PrecioVenta = '1' OR PrecioVenta = '5' OR PrecioVenta = '10') AND (Gama LIKE 'Aromaticas')
+
+
+6) SELECT PrecioVenta, PrecioProveedor, Nombre, CodigoProducto
+
+from Productos
+
+where (Precioventa-PrecioProveedor)/PrecioVenta < 0.5 and Gama not like 'Ornamentales'
+
+
+7)SELECT FechaPedido, FechaEsperada, FechaEntrega, CodigoPedido
+
+from pedidos
+
+where FechaEntrega is not null and FechaEntrega-FechaPedido<=7
+
+
+8)SELECT Nombre, Apellido1, CodigoEmpleado
+
+from empleados
+
+where CodigoJefe is null
+
+
+9)SELECT Detallepedidos.CodigoPedido, Detallepedidos.CodigoProducto, pedidos.CodigoPedido, Detallepedidos.PrecioUnidad, pedidos.FechaPedido
+
+FROM Pedidos INNER JOIN DetallePedidos
+
+WHERE (pedidos.CodigoPedido=DetallePedidos.CodigoPedido) and (pedidos.FechaPedido like "%2008%")
+
+
+10)SELECT clientes.CodigoCliente, clientes.nombrecliente, empleados.CodigoEmpleado, clientes.CodigoEmpleadoRepVentas, empleados.Nombre
+
+FROM clientes INNER JOIN empleados
+
+where clientes.CodigoEmpleadoRepVentas=empleados.CodigoEmpleado
+
+
+11)select productos.Nombre, productos.Gama, detallepedidos.CodigoProducto, productos.PrecioVenta, detallepedidos.NumeroLinea
+
+FROM productos INNER JOIN detallepedidos
+
+where productos.nombre or (productos.codigoproducto=detallepedidos.CodigoProducto) or productos.gama;
+
+
+12)select empleados.Nombre, /*empleados.CodigoOficina,*/ oficinas.CodigoOficina, oficinas.Pais ,oficinas.Ciudad
+
+from empleados INNER JOIN oficinas
+
+where empleados.CodigoOficina=oficinas.CodigoOficina and oficinas.Pais= 'España'
+
+
+13)select clientes.NombreCliente, empleados.nombre, empleados.CodigoEmpleado, oficinas.ciudad
+
+from clientes INNER JOIN empleados INNER JOIN oficinas
+
+where (clientes.CodigoEmpleadoRepVentas=empleados.CodigoEmpleado) and oficinas.ciudad in ('Madrid', 'Barcelona');
+
+
+14)select e.nombre, j.Nombre
+
+from empleados e INNER JOIN empleados j on e.CodigoJefe=j.CodigoEmpleado
+
+
+15)
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,1 @@
+update productos set PrecioVenta = PrecioVenta*1.1
