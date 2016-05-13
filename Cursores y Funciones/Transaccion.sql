@@ -54,7 +54,8 @@ end/
 #“ y seguirá con los nombres de los productos mediante comas.
 #Una vez conseguido, realizad un procedimiento equivalente.
 
-drop function ProdPrecio;
+#Ejercicio 1. FUNCIONES Y PROCEDIMIENTOS 
+drop function ProdPrecio;#By FerPerez13 | https://github.com/FerPerez13/ 
 delimiter |
 CREATE function ProdPrecio(g varchar(20), p int(10)) returns varchar(500)
 begin
@@ -75,3 +76,37 @@ begin
     return cad;
 end|
 select ProdPrecio('Aromáticas', 20);
+
+#2) La siguiente función debe construir una cadena con las fechas de pedido separada por comas, 
+#de los pedidos realizados en un año determinado pasado como parámetro. 
+#La cadena comenzará con “Pedidos del año X: “.  
+#Una vez conseguido, realizad un procedimiento equivalente.
+delimiter $
+create function Hype( a int) returns text
+begin
+	declare done int default 0;
+    declare cad text;
+    declare cod int (11);
+    declare f date;
+    declare cur1 cursor for select fechapedido, codigopedido from pedidos;
+    declare continue handler for sqlstate '02000' set done =1;
+    
+    set cad=concat('Los productos del año ',a,' son: ');
+    open cur1;
+    repeat 
+		fetch cur1 into f, cod;
+		if year(f)=a then
+			set cad=concat(cad,", ",f);
+		end if;
+    until done=1 end repeat;
+    return cad;
+    
+    
+end $
+
+select hype(2007)$
+
+/*#PROCEDIMIENTOSWANAL
+create procedure entrada_Pedidos (idcli int, idpro varchar, cant int)
+begin
+*/
